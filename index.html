@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Butterfly Iridescence Rendering</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      margin: 40px;
+      background-color: #f5f5f5;
+      color: #333;
+    }
+    h1, h2, h3 {
+      color: #1a4a7c;
+    }
+    section {
+      margin-bottom: 30px;
+    }
+    ul {
+      margin-top: 10px;
+    }
+    .highlight {
+      background-color: #e6f0ff;
+      padding: 10px;
+      border-left: 4px solid #1a4a7c;
+    }
+  </style>
+</head>
+<body>
+
+    
+
+  <h1>Simulating Iridescence in Butterfly Wings</h1>
+  <ul>
+    <li><strong>Anja Magsombol</strong> - akmagsombol@berkeley.edu</li>
+    <li><strong>Vivian Hsinyueh Chan</strong> - vivian_chan@berkeley.edu</li>
+    <li><strong>Gabriel Raulet</strong> - gabe.h.raulet@berkeley.edu</li>
+    <li><strong>Grace Aiping Wei</strong> - gawei@berkeley.edu</li>
+  </ul>
+  <section>
+    <h2>Goal</h2>
+    <p class="highlight">
+      We want to simulate the iridescent coloration of butterfly wings, particularly those from the <strong>Morpho</strong> genus, which display angle-dependent color shifts due to structural interference from multilayer nanostructures. Inspired by Sun et al. (2006), we will implement a simplified model of multilayer thin-film interference into an existing PathTracer from CS284 Homework 3.
+    </p>
+  </section>
+
+  <section>
+    <h2>Questions We Plan To Answer</h2>
+    <ul>
+      <li>What are the fundamental differences in how spectral power distributions (SPDs) and RGB values represent light, and how do these differences impact rendering accuracy?</li>
+      <li>What unique optical properties do nanostructured materials exhibit? How can they be represented in the ray tracer and how do their distributions differ from other BSDFs?</li>
+      <li>What are the challenges in achieving real-time rendering of materials with spectral behavior using a ray tracer? How can we optimize the system for real-time interactivity?</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>What We Plan to Deliver</h2>
+    <ul>
+      <li>Implementation of a custom BSDF that approximates multilayer interference using the empirical model in Sun et al. (2006).</li>
+      <li>Spectral approximation via precomputed wavelength-to-RGB mapping.</li>
+      <li>Initial tests on simple objects, like a sphere.</li>
+      <li>Series of images showing iridescence changes with light direction and viewing angle.</li>
+      <li>Full rendering of a Morpho butterfly, including bump mapping to model wing texture.</li>
+      <li>Visualizations of realistic color shifts in Morpho wings under varied lighting/viewing angles.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>What We Aspire to Deliver</h2>
+    <ul>
+      <li>Extension of the PathTracer to simulate spectral rendering directly using SPDs instead of RGB.</li>
+      <li>Direct modeling of the butterfly wing ridge geometry (beyond bump/normal mapping).</li>
+      <li>Rendering extensions to other interference-based systems (e.g. peacock feathers, CDs, beetle shells).</li>
+      <li>Interactive interface for modifying nanostructure parameters to observe iridescence changes.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>How We Plan To Measure System Quality</h2>
+    <ul>
+      <li>Visual realism assessment by comparing renderings with real-world iridescent surfaces.</li>
+      <li>System performance benchmarking via render time comparisons across different scene/material complexities.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Schedule</h2>
+    <ul>
+        <li><strong>Week 1:</strong> Literature review, architecture design, and development environment setup.</li>
+        <li><strong>Week 2:</strong> Implement custom BSDF, develop wavelength-to-RGB mapping, and test on simple objects.</li>
+        <li><strong>Week 3:</strong> Render iridescence images, implement bump mapping, and start full Morpho butterfly rendering.</li>
+        <li><strong>Week 4:</strong> Finalize rendering, conduct performance benchmarking, optimize for interactivity, and prepare presentation materials.</li>
+      </ul>
+      
+  </section>
+
+  <section>
+    <h2>Resources</h2>
+    <ul>
+        <li class="reference">
+            <a href="https://dl.acm.org/doi/10.1145/1122501.1122506" target="_blank">Rendering Biological Iridescences with RGB-Based Renderers</a>
+        </li>
+        <li class="reference">
+            <a href="https://dl.acm.org/doi/10.1145/1643928.1643952" target="_blank">A Generic Real-Time Rendering Approach for Structural Colors</a>
+        </li>
+    </ul>
+  </section>
+
+</body>
+</html>
