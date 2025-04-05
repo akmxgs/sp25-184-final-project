@@ -29,19 +29,34 @@
 </head>
 <body>
 
-  <p>Link to Project Proposal Webpage: <a href="https://akmxgs.github.io/sp25-184-final-project/">https://akmxgs.github.io/sp25-184-final-project/</a></p> 
+  <p><b>Link to Project Proposal Webpage:</b> <a href="https://akmxgs.github.io/sp25-184-final-project/">https://akmxgs.github.io/sp25-184-final-project/</a></p> 
 
-  <h1>Simulating Iridescence in Butterfly Wings</h1>
+  <h1>The Butterfly Effect: Simulating Iridescence in Butterfly Wings and Other Nanostructured Materials</h1>
   <ul>
     <li><strong>Anja Magsombol</strong> - akmagsombol@berkeley.edu</li>
     <li><strong>Vivian Hsinyueh Chan</strong> - vivian_chan@berkeley.edu</li>
     <li><strong>Gabriel Raulet</strong> - gabe.h.raulet@berkeley.edu</li>
     <li><strong>Grace Aiping Wei</strong> - gawei@berkeley.edu</li>
   </ul>
+
   <section>
-    <h2>Goal</h2>
+    <h2>Summary + Goal</h2>
     <p class="highlight">
+      In this project, we plan to adapt our existing ray tracing code in order to render and simulate the irridescence caused by light diffracting on complex nanostructures. We seek to explore the ways altering these nanostructures or the position of the light source influences the diffraction of light and how we perceive the color of an object's surface.
+      <br><br>
       We want to simulate the iridescent coloration of butterfly wings, particularly those from the <strong>Morpho</strong> genus, which display angle-dependent color shifts due to structural interference from multilayer nanostructures. Inspired by Sun et al. (2006), we will implement a simplified model of multilayer thin-film interference into an existing PathTracer from CS284 Homework 3.
+    </p>
+  </section>
+
+  <section>
+    <h2>Problem Description</h2>
+    <p>
+      The structural coloration found in Morpho butterfly wings is a fascinating natural optical phenomenon. Unlike pigment-based colors that absorb and reflect specific wavelengths to create the colors we see, these wings create vibrant, angle-dependent blues through nanoscale structures that cause light interference. This presents unique rendering challenges that traditional computer graphics approaches struggle to capture accurately.
+      Traditional rendering systems tend to use simplified RGB models that cannot accurately represent such complex spectral interactions present in the real-world.
+    </p>
+    <p>
+      To solve this problem, we aim to create a custom BSDF inspired by Sun et al. (2006) to mimic angle-dependent color shifts. A challenge lies in balancing the realistic accuracy of our renderings with computational efficiency. Spectral rendering would create more accurate images, but this requires more computational power than traditional RGB approaches.
+      If we use full spectral rendering for each frame, we risk lag time in our system as we intend to make the interface interactive to show different colors at different viewing angles.
     </p>
   </section>
 
