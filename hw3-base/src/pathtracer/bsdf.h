@@ -287,6 +287,37 @@ class EmissionBSDF : public BSDF {
 
 }; // class EmissionBSDF
 
+/**
+ * Multilayer Interference BSDF.
+ * Simulates view-dependent iridescent effects via an empirical model.
+ */
+ class MultilayerBSDF : public BSDF {
+  public:
+  
+  MultilayerBSDF(float d_film, float d_air,
+    float n_film,
+    float c_interf,
+    float phong_exp,
+    float ambient_coeff = 0.1f,
+    float light_scale = 1.0f);
+  
+  Vector3D f(const Vector3D wo, const Vector3D wi) override;
+  Vector3D sample_f(const Vector3D wo, Vector3D* wi, double* pdf) override;
+  Vector3D get_emission() const override{ return Vector3D(); }
+  bool is_delta() const override{ return false; }
+  // void render_debugger_node();
+
+  private:
+    float d;          // Film thickness (nm)
+    float d_air;      // Air gap thickness (nm)
+    float n;          // Refractive index of film
+    float c_interf;   // Interference strength
+    float n_phong;    // Phong highlight exponent
+    float ca;         // Ambient coefficient
+    float I0_scale;   // Incident white light scaling
+    CosineWeightedHemisphereSampler3D sampler;
+  }; // class MultilayerBSDF
+
 }  // namespace CGL
 
 #endif  // CGL_STATICSCENE_BSDF_H

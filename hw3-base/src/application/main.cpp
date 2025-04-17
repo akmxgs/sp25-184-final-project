@@ -80,6 +80,9 @@ HDRImageBuffer *load_exr(const char *file_path) {
 
 int main(int argc, char **argv) {
 
+  std::cout << "Main 0" << std::endl;
+
+
   // get the options
   AppConfig config;
   int opt;
@@ -200,16 +203,28 @@ int main(int argc, char **argv) {
   config.pathtracer_filename = sceneFile;
 
   // parse scene
+  std::cout << "Main 1" << std::endl;
+
   Collada::SceneInfo *sceneInfo = new Collada::SceneInfo();
+  std::cout << "Main 1.5" << std::endl;
+
   if (Collada::ColladaParser::load(sceneFilePath.c_str(), sceneInfo) < 0) {
     delete sceneInfo;
     exit(0);
   }
+  std::cout << "Main 2" << std::endl;
+
 
   // create application
   Application *app = new Application(config, !write_to_file);
 
+  std::cout << "Main 3" << std::endl;
+
+
   msg("Rendering using " << config.pathtracer_num_threads << " threads");
+
+  std::cout << "Main 4" << std::endl;
+
 
   // write straight to file without opening a window if -f option provided
   if (write_to_file) {

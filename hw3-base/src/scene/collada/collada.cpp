@@ -132,6 +132,9 @@ XMLElement* ColladaParser::get_technique_CGL( XMLElement* xml ) {
 
 int ColladaParser::load( const char* filename, SceneInfo* sceneInfo ) {
 
+  std::cout << "Entering ColladaParser::load" << std::endl;
+
+
   ifstream in (filename);
   if (!in.is_open()) {
     return -1;
@@ -159,6 +162,8 @@ int ColladaParser::load( const char* filename, SceneInfo* sceneInfo ) {
 
   // Build uri table
   uri_load(root);
+
+  std::cout << "Loading assets" << std::endl;
 
   // Load assets - correct up direction
   if (XMLElement* e_asset = get_element(root, "asset")) {
@@ -202,19 +207,27 @@ int ColladaParser::load( const char* filename, SceneInfo* sceneInfo ) {
     }
   }
 
+  std::cout << "Loading scene" << std::endl;
+
   // Load scene -
   // A scene should only have one visual_scene instance, this constraint
   // creates a one-to-one relationship between the document, the top-level
   // scene, and its visual description (COLLADA spec 1.4 page 91)
   if (XMLElement* e_scene = get_element(root, "scene/instance_visual_scene")) {
 
+    std::cout << "Inside scene loading" << std::endl;
+
     stat("Loading scene...");
 
     // parse all nodes in scene
     XMLElement* e_node = get_element(e_scene, "node");
     while (e_node) {
+      std::cout << "Inside node" << std::endl;
       parse_node(e_node);
+      std::cout << "Finished parsing node" << std::endl;
       e_node = e_node->NextSiblingElement("node");
+      std::cout << "Finished node" << std::endl;
+
     }
 
   } else {
@@ -223,6 +236,9 @@ int ColladaParser::load( const char* filename, SceneInfo* sceneInfo ) {
   }
 
   return 0;
+
+  std::cout << "Finished ColladaParser::load" << std::endl;
+
 
 }
 
@@ -234,6 +250,12 @@ int ColladaParser::save( const char* filename, const SceneInfo* sceneInfo ) {
 }
 
 void ColladaParser::parse_node( XMLElement* xml ) {
+
+  cout << "Parsing node..." << endl;
+  if (!xml) {
+    cout << "parse_node received null XML node!" << endl;
+    return;
+  }
 
   // create new node
   Node node = Node();
@@ -351,19 +373,29 @@ void ColladaParser::parse_node( XMLElement* xml ) {
 
   // node instance -
   // non-joint nodes must contain a scene object instance
+
+  cout << "Parsing node instances" << endl;
+
   XMLElement* e_camera   = get_element(xml, "instance_camera");
   XMLElement* e_light    = get_element(xml, "instance_light");
   XMLElement* e_geometry = get_element(xml, "instance_geometry");
 
   if (e_camera) {
+    cout << "Parsing camera" << endl;
+
     CameraInfo* camera = new CameraInfo();
     parse_camera( e_camera, *camera );
     node.instance = camera;
   } else if (e_light) {
+    cout << "Parsing light" << endl;
     LightInfo* light = new LightInfo();
+    cout << "Parsing light2" << endl;
     parse_light( e_light, *light );
+    cout << "Parsing light3" << endl;
     node.instance = light;
   } else if (e_geometry) {
+    cout << "Parsing geometry" << endl;
+
     if (get_element(e_geometry, "mesh")) {
 
       // mesh geometry
@@ -530,6 +562,7 @@ void ColladaParser::parse_light( XMLElement* xml, LightInfo& light ) {
         exit(EXIT_FAILURE);
       }
     } else if (type == "point") {
+      cout << "INSIDE POINT LIGHT" << endl;
       light.light_type = LightType::POINT;
       XMLElement* e_color = get_element(e_light, "color");
       XMLElement* e_constant_att = get_element(e_light, "constant_attenuation");
@@ -539,11 +572,16 @@ void ColladaParser::parse_light( XMLElement* xml, LightInfo& light ) {
         string color_string = e_color->GetText();
         light.spectrum = spectrum_from_string( color_string );
         light.constant_att = atof(e_constant_att->GetText());
-        light.constant_att = atof(e_linear_att->GetText());
-        light.constant_att = atof(e_quadratic_att->GetText());
+        light.linear_att = atof(e_linear_att->GetText());
+        light.quadratic_att = atof(e_quadratic_att->GetText());
       } else {
         stat("Error: incomplete definition of point light: " << light.id);
-        exit(EXIT_FAILURE);
+        cout << "Warning: Incomplete point light definition. Assigning defaults." << endl;
+        light.spectrum = Vector3D(1,1,1); // white light
+        light.constant_att = 1.0;
+        light.linear_att = 0.0;
+        light.quadratic_att = 0.0;
+        // exit(EXIT_FAILURE);
       }
     } else if (type == "spot") {
       light.light_type = LightType::SPOT;
@@ -854,13 +892,26 @@ void ColladaParser::parse_polymesh(XMLElement* xml, PolymeshInfo& polymesh) {
 void ColladaParser::parse_material ( XMLElement* xml, MaterialInfo& material ) {
 
   // name & id
+
+  cout << "Parse1" << endl;
+
   material.id   = xml->Attribute( "id" );
   material.name = xml->Attribute("name");
   material.type = Instance::MATERIAL;
 
+  cout << "Parse2" << endl;
+
   // parse effect
   XMLElement* e_effect = get_element(xml, "instance_effect");
   if (e_effect) {
+    cout << "e_effect node name: " << e_effect->Name() << endl;
+  } else {
+      cout << "e_effect is NULL!" << endl;
+  }
+  cout << "Parse3" << endl;
+  if (e_effect) {
+
+    cout << "Parse4" << endl;
 
     // if the material does not have additional specification in the 462
     // profile. The diffuse color will be used to create a diffuse BSDF,
@@ -869,9 +920,25 @@ void ColladaParser::parse_material ( XMLElement* xml, MaterialInfo& material ) {
     XMLElement* tech_common = get_technique_common(e_effect); // common profile
     XMLElement* tech_CGL = get_technique_CGL(e_effect); // CGL profile
 
+    cout << "Parse5" << endl;
+
+    if (!tech_CGL) {
+      cout << "No tech_CGL found!" << endl;
+    } else {
+      cout << "Found tech_CGL!" << endl;
+    }
+
+    if (!tech_common) {
+      cout << "No tech_common found!" << endl;
+    } else {
+      cout << "Found tech_common!" << endl;
+    }
+
     if (tech_CGL) {
       XMLElement *e_bsdf = tech_CGL->FirstChildElement();
+      cout << "Parse6" << endl;
       while (e_bsdf) {
+        cout << "Entered while" << endl;
         string type = e_bsdf->Name();
         if (type == "emission") {
           XMLElement *e_radiance  = get_element(e_bsdf, "radiance");
@@ -892,6 +959,34 @@ void ColladaParser::parse_material ( XMLElement* xml, MaterialInfo& material ) {
           Vector3D eta = spectrum_from_string(string(e_eta->GetText()));
           Vector3D k = spectrum_from_string(string(e_k->GetText()));
           BSDF* bsdf = new MicrofacetBSDF(eta, k, alpha);
+          material.bsdf = bsdf;
+        } else if (type == "multilayer") {
+          cout << "Got type" << endl;
+          XMLElement* e_d_film    = get_element(e_bsdf, "d_film");
+          XMLElement* e_d_air     = get_element(e_bsdf, "d_air");
+          XMLElement* e_n_film    = get_element(e_bsdf, "n_film");
+          XMLElement* e_c_interf  = get_element(e_bsdf, "c_interf");
+          XMLElement* e_n_phong   = get_element(e_bsdf, "n_phong");
+          XMLElement* e_ambient   = get_element(e_bsdf, "ambient");
+        
+          float d_film   = atof(e_d_film->GetText());
+          float d_air    = atof(e_d_air->GetText());
+          float n_film   = atof(e_n_film->GetText());
+          float c_interf = atof(e_c_interf->GetText());
+          float n_phong  = atof(e_n_phong->GetText());
+          float ambient  = atof(e_ambient->GetText());
+
+          cout << "Creating MultilayerBSDF now!" << endl;
+
+        
+          BSDF* bsdf = new MultilayerBSDF(
+              d_film,
+              d_air,
+              n_film,
+              c_interf,
+              n_phong,
+              ambient,
+              1.0f /* light scale, optional */);
           material.bsdf = bsdf;
         } else if (type == "refraction") {
           XMLElement *e_transmittance  = get_element(e_bsdf, "transmittance");
@@ -914,7 +1009,10 @@ void ColladaParser::parse_material ( XMLElement* xml, MaterialInfo& material ) {
           BSDF* bsdf = new GlassBSDF(transmittance, reflectance, roughness, ior);
           material.bsdf = bsdf;
         }
+        cout << "Finished creating MultilayerBSDF!" << endl;
+
         e_bsdf = e_bsdf->NextSiblingElement();
+        cout << "Parse7" << endl;
       }
     } else if (tech_common) {
       XMLElement* e_diffuse = get_element(tech_common, "phong/diffuse/color");
@@ -934,7 +1032,9 @@ void ColladaParser::parse_material ( XMLElement* xml, MaterialInfo& material ) {
   }
 
   // print summary
+  cout << "Before print" << endl;
   stat("  |- " << material);
+  cout << "Finished parsing material" << endl;
 }
 
 } // namespace Collada

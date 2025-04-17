@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<COLLADA version="1.4.1" xmlns="http://www.collada.org/2005/11/COLLADASchema">
+  <asset>
+    <contributor>
+      <author>CS284 User</author>
+    </contributor>
+    <created>2025-04-16</created>
+    <modified>2025-04-16</modified>
+    <unit name="meter" meter="1"/>
+    <up_axis>Z_UP</up_axis>
+  </asset>
+
+  <library_effects>
+    <effect id="effect_multilayer">
+      <profile_COMMON>
+
+        <!-- Normal required Phong BSDF -->
+        <technique sid="common">
+          <phong>
+            <diffuse>
+              <color>0.5 0.5 0.5 1</color>
+            </diffuse>
+            <specular>
+              <color>0 0 0 1</color>
+            </specular>
+            <shininess>
+              <float>1</float>
+            </shininess>
+          </phong>
+        </technique>
+
+      </profile_COMMON>
+      <!-- YOUR Multilayer BSDF -->
+      <extra>
+        <technique profile="CGL">
+          <multilayer>
+            <d_film>90</d_film>
+            <d_air>90</d_air>
+            <n_film>1.56</n_film>
+            <c_interf>1.0</c_interf>
+            <n_phong>50</n_phong>
+            <ambient>0.1</ambient>
+          </multilayer>
+        </technique>
+        </extra>
+    </effect>
+  </library_effects>
+
+  <library_materials>
+    <material id="material_multilayer" name="material_multilayer">
+      <instance_effect url="#effect_multilayer"/>
+    </material>
+  </library_materials>
+
+  <library_geometries>
+    <geometry id="sphereGeo" name="sphereGeo">
+      <mesh>
+        <source id="sphereGeo-positions">
+          <float_array id="sphereGeo-positions-array" count="24">
+            0 0 1   0.866 0 0.5   0.866 0 -0.5   0 0 -1
+            -0.866 0 -0.5   -0.866 0 0.5   0.5 0.866 0
+            0.5 -0.866 0   -0.5 -0.866 0   -0.5 0.866 0
+          </float_array>
+          <technique_common>
+            <accessor source="#sphereGeo-positions-array" count="10" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+
+        <vertices id="sphereGeo-vertices">
+          <input semantic="POSITION" source="#sphereGeo-positions"/>
+        </vertices>
+
+        <triangles count="8">
+          <input semantic="VERTEX" source="#sphereGeo-vertices" offset="0"/>
+          <p>0 6 1 1 6 2 2 6 3 3 6 7 3 7 4 4 7 8 4 8 5 5 8 9 5 9 0 0 9 6</p>
+        </triangles>
+      </mesh>
+    </geometry>
+  </library_geometries>
+
+  <library_visual_scenes>
+    <visual_scene id="Scene" name="Scene">
+      <node id="sphereNode" name="sphereNode">
+        <instance_geometry url="#sphereGeo">
+          <bind_material>
+            <technique_common>
+              <instance_material symbol="material_multilayer" target="#material_multilayer"/>
+            </technique_common>
+          </bind_material>
+        </instance_geometry>
+      </node>
+
+      <node id="lightNode" name="lightNode">
+        <translate>5 5 5</translate>
+        <instance_light url="#light"/>
+      </node>
+
+      <node id="cameraNode" name="cameraNode">
+        <translate>0 0 5</translate>
+        <instance_camera url="#camera"/>
+      </node>
+    </visual_scene>
+  </library_visual_scenes>
+
+  <library_lights>
+    <light id="light">
+      <technique_common>
+        <point>
+          <color>1 1 1</color>
+          <constant_attenuation>1.0</constant_attenuation>
+          <linear_attenuation>0.0</linear_attenuation>
+          <quadratic_attenuation>0.0</quadratic_attenuation>
+        </point>
+      </technique_common>
+    </light>
+  </library_lights>
+
+  <library_cameras>
+    <camera id="camera">
+      <technique_common>
+        <perspective>
+          <yfov>45</yfov>
+          <znear>0.1</znear>
+          <zfar>1000</zfar>
+        </perspective>
+      </technique_common>
+    </camera>
+  </library_cameras>
+
+  <scene>
+    <instance_visual_scene url="#Scene"/>
+  </scene>
+</COLLADA>
