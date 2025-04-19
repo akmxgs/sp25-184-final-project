@@ -228,6 +228,8 @@ string Application::info() {
 
 void Application::load(SceneInfo* sceneInfo) {
 
+  std::cout << "Application::load" << std::endl;
+
   vector<Collada::Node>& nodes = sceneInfo->nodes;
   vector<GLScene::SceneLight *> lights;
   vector<GLScene::SceneObject *> objects;
@@ -238,13 +240,20 @@ void Application::load(SceneInfo* sceneInfo) {
   Vector3D c_dir = Vector3D();
 
   int len = nodes.size();
+
+  std::cout << "AppLoad 1" << std::endl;
+
   for (int i = 0; i < len; i++) {
     Collada::Node& node = nodes[i];
     Collada::Instance *instance = node.instance;
     const Matrix4x4& transform = node.transform;
 
+    std::cout << "AppLoad 1.1" << std::endl;
+
+
     switch(instance->type) {
       case Collada::Instance::CAMERA:
+        std::cout << "AppLoad 1.2" << std::endl;
         c = static_cast<CameraInfo*>(instance);
         c_pos = (transform * Vector4D(c_pos,1)).to3D();
         c_dir = (transform * Vector4D(c->view_dir,1)).to3D().unit();
@@ -252,23 +261,32 @@ void Application::load(SceneInfo* sceneInfo) {
         break;
       case Collada::Instance::LIGHT:
       {
+        std::cout << "AppLoad 1.3" << std::endl;
+
         lights.push_back(
           init_light(static_cast<LightInfo&>(*instance), transform));
         break;
       }
       case Collada::Instance::SPHERE:
+        std::cout << "AppLoad 1.4" << std::endl;
         objects.push_back(
           init_sphere(static_cast<SphereInfo&>(*instance), transform));
         break;
       case Collada::Instance::POLYMESH:
+        std::cout << "AppLoad 1.5" << std::endl;
+
         objects.push_back(
           init_polymesh(static_cast<PolymeshInfo&>(*instance), transform));
         break;
       case Collada::Instance::MATERIAL:
+        std::cout << "AppLoad 1.6" << std::endl;
+
         init_material(static_cast<MaterialInfo&>(*instance));
         break;
      }
   }
+
+  std::cout << "AppLoad 2" << std::endl;
 
   scene = new GLScene::Scene(objects, lights);
 

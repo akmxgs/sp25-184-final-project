@@ -242,17 +242,29 @@ int main(int argc, char **argv) {
     return 0;
   }
 
+
+
   // create viewer
   Viewer viewer = Viewer();
 
+  std::cout << "Main 5" << std::endl;
+
+
   // set renderer
   viewer.set_renderer(app);
+  
+  std::cout << "Main 6" << std::endl;
 
   // init viewer
   viewer.init();
 
+  std::cout << "Main 7" << std::endl;
+
   // load scene
   app->load(sceneInfo);
+
+  std::cout << "Main 8" << std::endl;
+
 
   delete sceneInfo;
 

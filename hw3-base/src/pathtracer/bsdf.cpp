@@ -141,8 +141,8 @@ Vector3D MultilayerBSDF::f(const Vector3D wo, const Vector3D wi) {
 
   // === PARAMETERS ===
   double ca = 0.1;        // Ambient coefficient
-  double cs = 1.0;        // Specular interference coefficient
-  double m = 8.0;         // Interference power (peak sharpness)
+  double cs = 1.5;        // Specular interference coefficient
+  double m = 20;         // Interference power (peak sharpness)
   double n_phong = 50.0;  // Phong exponent (highlight sharpness)
 
   // === WAVELENGTHS FOR RGB (in nm) ===
@@ -169,6 +169,9 @@ Vector3D MultilayerBSDF::f(const Vector3D wo, const Vector3D wi) {
   // === R_empirical function ===
   auto R_empirical = [&](double lambda_nm) {
     double cos_db = cos(delta_b(lambda_nm));
+    std::cout << "[DEBUG] lambda=" << lambda_nm 
+              << " delta_b=" << delta_b(lambda_nm) 
+              << " cos(delta_b)=" << cos_db << std::endl;
     return (cos_db > 0.0) ? c_interf * pow(cos_db, m) : 0.0;
   };
 
@@ -177,8 +180,17 @@ Vector3D MultilayerBSDF::f(const Vector3D wo, const Vector3D wi) {
   double Rg = R_empirical(lambda_g);
   double Rb = R_empirical(lambda_b);
 
+  
+
   // === Phong term ===
   double phong = pow(clamp(dot(H, N), 0.0, 1.0), n_phong);
+
+  // Debug: print Rr, Rg, Rb
+  std::cout << "[DEBUG] Rr = " << Rr 
+  << ", Rg = " << Rg 
+  << ", Rb = " << Rb 
+  << ", phong = " << phong 
+  << std::endl;
 
   // === Final spectrum ===
   Vector3D I0(1.0, 1.0, 1.0); // Assume white light for now
